@@ -1,0 +1,15 @@
+{
+  "name": "comptoirdesappli/convertws",
+  "description": "File Format Conversion WebService",
+  "minimum-stability": "dev",
+  "license": "gplv2",
+  "authors": [
+    {
+      "name": "ShareVB",
+      "email": "sharevb@gmail.com"
+    }
+  ],
+  "require": {
+    "ncjoes/office-converter": "v0.1.3"
+  }
+}
