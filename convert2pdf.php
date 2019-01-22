@@ -1,6 +1,7 @@
 <?php
 
 if ( empty( $_FILES['input'] ) ) {
+	echo 'Input file not set';
 	http_response_code( 401 );
 	die();
 }
@@ -14,6 +15,7 @@ while ( true ) {
 }
 
 if ( ! move_uploaded_file( $_FILES['input']['tmp_name'], $filename ) ) {
+	echo 'Input file invalid';
 	http_response_code( 401 );
 	die();
 }
@@ -31,7 +33,8 @@ try {
 
 	readfile( $pdffile );
 } catch ( \NcJoes\OfficeConverter\OfficeConverterException $exception ) {
-	header( 'Status: 500 ' . $exception->getMessage() );
+	echo $exception->getMessage();
+	http_response_code( 500 );
 }
 
 @unlink( $filename );
