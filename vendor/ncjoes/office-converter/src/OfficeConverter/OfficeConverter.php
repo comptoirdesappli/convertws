@@ -47,7 +47,10 @@ class OfficeConverter
         $outdir = $this->tempPath;
         $shell = $this->exec($this->makeCommand($outdir, $outputExtension));
         if ($shell['return'] != 0) {
-            throw new OfficeConverterException("Convertion Failure! Contact Server Admin.");
+	        $exit_code = $shell['return'];
+	        $stderr = $shell['stderr'];
+	        $stdout = $shell['stdout'];
+            throw new OfficeConverterException("Convertion Failed.\nExit code=$exit_code\nStdOut=$stdout\nStdErr=$stderr");
         }
 
         return $this->prepOutput($outdir, $filename, $outputExtension);
