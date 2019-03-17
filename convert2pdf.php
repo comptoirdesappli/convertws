@@ -8,8 +8,8 @@ if ( empty( $_FILES['input'] ) ) {
 
 $ext = pathinfo( $_FILES['input']['name'], PATHINFO_EXTENSION );
 while ( true ) {
-	$filename = uniqid( 'convertpdf', true ) . '.' . $ext;
-	if ( ! file_exists( sys_get_temp_dir() . $filename ) ) {
+	$filename = sys_get_temp_dir() . '/' . uniqid( 'convertpdf', true ) . '.' . $ext;
+	if ( ! file_exists( $filename ) ) {
 		break;
 	}
 }
