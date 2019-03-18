@@ -1,40 +1,24 @@
 <?php
 
-if ( empty( $_FILES['input'] ) ) {
-	echo 'Input file not set';
-	http_response_code( 401 );
-	die();
-}
+/**
+ * @param $filename
+ *
+ * @throws RunnerException
+ */
+function process_file( $filename ) {
+	require_once 'runners/LibreOfficeConverter.php';
 
-$ext = pathinfo( $_FILES['input']['name'], PATHINFO_EXTENSION );
-while ( true ) {
-	$filename = sys_get_temp_dir() . '/' . uniqid( 'convertpdf', true ) . '.' . $ext;
-	if ( ! file_exists( $filename ) ) {
-		break;
-	}
-}
-
-if ( ! move_uploaded_file( $_FILES['input']['tmp_name'], $filename ) ) {
-	echo 'Input file invalid';
-	http_response_code( 401 );
-	die();
-}
-
-require_once 'vendor/autoload.php';
-
-try {
 	$pdffile   = $filename . '.pdf';
 	$pdfname   = pathinfo( $_FILES['input']['name'], PATHINFO_FILENAME ) . '.pdf';
-	$converter = new \NcJoes\OfficeConverter\OfficeConverter( $filename );
-	$converter->convertTo( $pdffile );
+	$converter = new LibreOfficeConverter( $filename );
+	$converter->convert( $pdffile );
 
 	header( "Content-type:application/pdf" );
 	header( "Content-Disposition:attachment;filename='$pdfname'" );
 
 	readfile( $pdffile );
-} catch ( \NcJoes\OfficeConverter\OfficeConverterException $exception ) {
-	echo $exception->getMessage();
-	http_response_code( 500 );
+	@unlink( $filename );
 }
 
-@unlink( $filename );
+//run process_file function
+require 'process.php';
