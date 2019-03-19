@@ -8,7 +8,8 @@ if ( empty( $_FILES['input'] ) ) {
 
 $ext = pathinfo( $_FILES['input']['name'], PATHINFO_EXTENSION );
 while ( true ) {
-	$filename = sys_get_temp_dir() . '/' . uniqid( 'convertpdf', true ) . '.' . $ext;
+	$file_base = sys_get_temp_dir() . '/' . uniqid( 'convertpdf', true );
+	$filename = $file_base . '.' . $ext;
 	if ( ! file_exists( $filename ) ) {
 		break;
 	}
@@ -23,13 +24,13 @@ if ( ! move_uploaded_file( $_FILES['input']['tmp_name'], $filename ) ) {
 require_once 'vendor/autoload.php';
 
 try {
-	$pdffile   = $filename . '.pdf';
+	$pdffile   = $file_base . '.pdf';
 	$pdfname   = pathinfo( $_FILES['input']['name'], PATHINFO_FILENAME ) . '.pdf';
 	$converter = new \NcJoes\OfficeConverter\OfficeConverter( $filename );
 	$converter->convertTo( $pdffile );
 
 	header( "Content-type:application/pdf" );
-	header( "Content-Disposition:attachment;filename='$pdfname'" );
+	header( "Content-Disposition:attachment;filename=\"$pdfname\"" );
 
 	readfile( $pdffile );
 } catch ( \NcJoes\OfficeConverter\OfficeConverterException $exception ) {
@@ -38,3 +39,4 @@ try {
 }
 
 @unlink( $filename );
+@unlink( $pdffile );
