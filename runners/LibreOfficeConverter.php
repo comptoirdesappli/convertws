@@ -22,6 +22,8 @@ class LibreOfficeConverter extends BaseRunner {
 			'doc'  => [ 'pdf', 'odt', 'html' ],
 			'xlsx' => [ 'pdf' ],
 			'xls'  => [ 'pdf' ],
+			'ods'  => [ 'pdf' ],
+			'odt'  => [ 'pdf' ],
 		];
 	}
 
