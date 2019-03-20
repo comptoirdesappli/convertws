@@ -62,6 +62,15 @@ class BaseRunner {
 		}
 	}
 
+	public static function replace_extension( $filename, $new_extension ) {
+		$info = pathinfo( $filename );
+
+		return ( $info['dirname'] ? $info['dirname'] . DIRECTORY_SEPARATOR : '' )
+		       . $info['filename']
+		       . '.'
+		       . ltrim( $new_extension, '.' );
+	}
+
 	/**
 	 * @param string|null $preset
 	 * @param string $output_filename
@@ -77,8 +86,7 @@ class BaseRunner {
 			throw new RunnerException( "For preset {$preset}, output extension({$outputExtension}) not supported for input file({$this->basename})" );
 		}
 
-		$outdir = $this->tempPath;
-		$shell  = $this->exec( $this->makeCommand( $preset, $outdir, $output_filename, $outputExtension ) );
+		$shell = $this->exec( $this->makeCommand( $preset, $this->tempPath, $output_filename, $outputExtension ) );
 		if ( $shell['return'] != 0 ) {
 			$exit_code = $shell['return'];
 			$stderr    = $shell['stderr'];
@@ -86,7 +94,16 @@ class BaseRunner {
 			throw new RunnerException( "Processing Failed.\nExit code=$exit_code\nStdOut=$stdout\nStdErr=$stderr" );
 		}
 
-		return $this->prepOutput( $outdir, $output_filename, $outputExtension );
+		if ( is_file( $output_filename ) ) {
+			return $output_filename;
+		}
+
+		$temp_output_file = realpath( BaseRunner::replace_extension( $this->tempPath . DIRECTORY_SEPARATOR . $this->basename, $outputExtension ) );
+		if ( is_file( $temp_output_file ) && rename( $temp_output_file, $output_filename ) ) {
+			return $output_filename;
+		}
+
+		return null;
 	}
 
 	/**
@@ -145,27 +162,6 @@ class BaseRunner {
 		$cmd             = $this->getCommand( $preset, $inputFileName, $outputDirectory, $outputFileName, $outputExtension );
 
 		return "$bin $cmd";
-	}
-
-	/**
-	 * @param string $outdir
-	 * @param string $filename
-	 * @param string $outputExtension
-	 *
-	 * @return null|string
-	 */
-	protected function prepOutput( $outdir, $filename, $outputExtension ) {
-		$DS      = DIRECTORY_SEPARATOR;
-		$tmpName = str_replace( $this->extension, '', $this->basename ) . $outputExtension;
-		if ( rename( $outdir . $DS . $tmpName, $outdir . $DS . $filename ) ) {
-			return $outdir . $DS . $filename;
-		} elseif ( is_file( $outdir . $DS . $tmpName ) ) {
-			return $outdir . $DS . $tmpName;
-		} elseif ( is_file( $filename ) ) {
-			return $filename;
-		}
-
-		return null;
 	}
 
 	/**
