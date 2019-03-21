@@ -18,15 +18,11 @@ if ( empty( $_FILES['input'] ) ) {
 	die();
 }
 
-$ext = pathinfo( $_FILES['input']['name'], PATHINFO_EXTENSION );
-while ( true ) {
-	$filename = sys_get_temp_dir() . '/' . uniqid( 'convertpdf', true ) . '.' . $ext;
-	if ( ! file_exists( $filename ) ) {
-		break;
-	}
-}
+$ext               = pathinfo( $_FILES['input']['name'], PATHINFO_EXTENSION );
+$filename          = tempnam( sys_get_temp_dir(), 'convertws' );
+$filename_with_ext = $filename . '.' . $ext;
 
-if ( ! move_uploaded_file( $_FILES['input']['tmp_name'], $filename ) ) {
+if ( ! move_uploaded_file( $_FILES['input']['tmp_name'], $filename_with_ext ) ) {
 	echo 'Input file invalid';
 	http_response_code( 401 );
 	die();
@@ -35,10 +31,11 @@ if ( ! move_uploaded_file( $_FILES['input']['tmp_name'], $filename ) ) {
 require_once 'runners/RunnerException.php';
 
 try {
-	process_file( $filename );
+	process_file( $filename_with_ext );
 } catch ( RunnerException $exception ) {
 	echo $exception->getMessage();
 	http_response_code( 500 );
 }
 
+@unlink( $filename_with_ext );
 @unlink( $filename );
