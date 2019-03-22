@@ -6,9 +6,22 @@
 </head>
 <body>
     <form action="convert2pdf.php" method="post" enctype="multipart/form-data">
-        <label for="input">Input file to convert to PDF :</label><br />
-        <input id="input" name="input" type="file" /><br />
+        <label for="input1">Input file to convert to PDF :</label><br/>
+        <input id="input1" name="input" type="file"/><br/>
         <input type="submit" value="Convert"><br />
+    </form>
+    <hr/>
+    <form action="optimizepdf.php" method="post" enctype="multipart/form-data">
+        <label for="input2">Input PDF file to optimize :</label><br/>
+        <input id="input2" name="input" type="file"/><br/>
+        <label for="preset">Preset :</label><br/>
+        <select id="preset" name="preset">
+            <option value="screen">Screen</option>
+            <option value="ebook">Ebook</option>
+            <option value="printer">Printer</option>
+            <option value="prepress">Prepress</option>
+        </select><br/>
+        <input type="submit" value="Optimize"><br/>
     </form>
 </body>
 </html>
