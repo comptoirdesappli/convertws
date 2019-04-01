@@ -23,5 +23,16 @@
         </select><br/>
         <input type="submit" value="Optimize"><br/>
     </form>
+    <hr/>
+    <form action="convertebook.php" method="post" enctype="multipart/form-data">
+        <label for="input3">Input file to convert :</label><br/>
+        <input id="input3" name="input" type="file"/><br/>
+        <select id="output3" name="output">
+            <option value="epub">EPUB</option>
+            <option value="mobi">MOBI</option>
+        </select><br/>
+        <input type="submit" value="Convert"><br/>
+    </form>
+    <hr/>
 </body>
 </html>
