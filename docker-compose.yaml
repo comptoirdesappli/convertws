@@ -1,0 +1,5 @@
+services:
+  convertws:
+    build: .
+    ports:
+      - "5010:80"
