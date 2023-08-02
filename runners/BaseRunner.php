@@ -86,11 +86,12 @@ class BaseRunner {
 			throw new RunnerException( "For preset {$preset}, output extension({$outputExtension}) not supported for input file({$this->basename})" );
 		}
 
-		$shell = $this->exec( $this->makeCommand( $preset, $this->tempPath, $output_filename, $outputExtension ) );
-		if ( $shell['return'] != 0 ) {
-			$exit_code = $shell['return'];
-			$stderr    = $shell['stderr'];
-			$stdout    = $shell['stdout'];
+		$cmd       = $this->makeCommand( $preset, $this->tempPath, $output_filename, $outputExtension );
+		$shell     = $this->exec( $cmd );
+		$exit_code = $shell['return'];
+		$stderr    = $shell['stderr'];
+		if ( $exit_code != 0 || ! empty( $stderr ) ) {
+			$stdout = $shell['stdout'];
 			throw new RunnerException( "Processing Failed.\nExit code=$exit_code\nStdOut=$stdout\nStdErr=$stderr" );
 		}
 
@@ -140,7 +141,7 @@ class BaseRunner {
 		$this->extension = $extension;
 
 		//setup output path
-		if ( ! is_dir( $tempPath ) ) {
+		if ( null == $tempPath || ! is_dir( $tempPath ) ) {
 			$tempPath = dirname( $this->file );
 		}
 		$this->tempPath = realpath( $tempPath );
