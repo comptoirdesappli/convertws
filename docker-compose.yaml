@@ -2,4 +2,4 @@ services:
   convertws:
     build: .
     ports:
-      - "5010:80"
+      - "8080:80"
